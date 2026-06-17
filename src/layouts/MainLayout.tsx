@@ -22,7 +22,7 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden text-gray-900">
+    <div className="flex fixed inset-0 bg-gray-50 overflow-hidden text-gray-900">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200">
         <div className="p-6">
