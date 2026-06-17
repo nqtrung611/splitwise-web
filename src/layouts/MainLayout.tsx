@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { Home, UserPlus, LogOut, FileText, BarChart3 } from 'lucide-react';
+import { Home, UserPlus, LogOut, BarChart3 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const MainLayout = () => {

@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getExpenses, getMembers } from '../services/api';
-import type { Expense, Member } from '../types';
 import AddExpenseModal from '../components/AddExpenseModal';
 import SettleUpModal from '../components/SettleUpModal';
-import { ArrowUpRight, ArrowDownRight, CheckCircle2, UserCircle2 } from 'lucide-react';
+import { UserCircle2 } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSettleModalOpen, setIsSettleModalOpen] = useState(false);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [members, setMembers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   // Balances
-  const [youOwe, setYouOwe] = useState(0);
-  const [youAreOwed, setYouAreOwed] = useState(0);
   const [balances, setBalances] = useState<Record<string, number>>({});
 
   const fetchDashboardData = async () => {
@@ -64,10 +60,8 @@ const Dashboard = () => {
           newBalances[key] = 0;
         }
       });
-
+      setMembers(memberMap);
       setBalances(newBalances);
-      setYouOwe(owe);
-      setYouAreOwed(owed);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {

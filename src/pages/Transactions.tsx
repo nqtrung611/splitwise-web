@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getExpenses, getMembers } from '../services/api';
-import type { Expense, Member } from '../types';
-import { ArrowUpRight, ArrowDownRight, CheckCircle2, UserCircle2, Wallet, Banknote, History, BarChart3 } from 'lucide-react';
+import type { Expense } from '../types';
+import { ArrowUpRight, ArrowDownRight, CheckCircle2, UserCircle2, History, BarChart3 } from 'lucide-react';
 
 interface MemberReport {
   id: string;
