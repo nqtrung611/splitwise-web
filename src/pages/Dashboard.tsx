@@ -29,10 +29,7 @@ const Dashboard = () => {
         memberMap[m.id] = m.name;
       });
       setMembers(memberMap);
-      setExpenses(data);
       
-      let owe = 0;
-      let owed = 0;
       const newBalances: Record<string, number> = {};
 
       data.forEach(expense => {
@@ -41,7 +38,6 @@ const Dashboard = () => {
           expense.splits.forEach(s => {
             if (s.userId !== user.uid) {
               newBalances[s.userId] = (newBalances[s.userId] || 0) + s.amount;
-              owed += s.amount;
             }
           });
         } else {
@@ -49,7 +45,6 @@ const Dashboard = () => {
           const mySplit = expense.splits.find(s => s.userId === user.uid)?.amount || 0;
           if (mySplit > 0) {
             newBalances[expense.payerId] = (newBalances[expense.payerId] || 0) - mySplit;
-            owe += mySplit;
           }
         }
       });
