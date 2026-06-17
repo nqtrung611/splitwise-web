@@ -67,19 +67,19 @@ const Members = () => {
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
         {success && <p className="text-green-500 text-sm mb-3">{success}</p>}
 
-        <form onSubmit={handleAddMember} className="flex gap-3">
+        <form onSubmit={handleAddMember} className="flex flex-col sm:flex-row gap-3">
           <input
             type="text"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Tên thành viên (Vd: Nam, Lan...)"
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
+            className="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
           />
           <button
             type="submit"
             disabled={adding}
-            className="bg-brand text-white px-6 py-2 rounded-xl font-medium hover:bg-brand-dark transition-colors disabled:opacity-70"
+            className="bg-brand text-white px-6 py-2 rounded-xl font-medium hover:bg-brand-dark transition-colors disabled:opacity-70 shrink-0"
           >
             {adding ? 'Đang thêm...' : 'Thêm'}
           </button>

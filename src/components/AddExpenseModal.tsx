@@ -134,7 +134,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, onSu
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto">
+        <div className="flex-1 min-h-0 p-6 overflow-y-auto">
           {error && <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100">{error}</div>}
 
           <form id="expense-form" onSubmit={handleSubmit} className="space-y-5">
