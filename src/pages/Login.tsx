@@ -6,7 +6,7 @@ import { auth, db } from '../lib/firebase';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
