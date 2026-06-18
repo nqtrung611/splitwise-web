@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getMembers, createMember } from '../services/api';
+import { getMembers, createMember, updateMember } from '../services/api';
 import type { Member } from '../types';
-import { UserPlus, User } from 'lucide-react';
+import { UserPlus, User, Edit2, X, Check } from 'lucide-react';
 
 const Members = () => {
   const { user } = useAuth();
@@ -12,6 +12,10 @@ const Members = () => {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const fetchMembers = async () => {
     if (!user) return;
@@ -48,6 +52,22 @@ const Members = () => {
       setError(err.message || 'Có lỗi xảy ra');
     } finally {
       setAdding(false);
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent, id: string) => {
+    e.preventDefault();
+    if (!editName.trim()) return;
+    
+    setSavingEdit(true);
+    try {
+      await updateMember(id, editName.trim());
+      setEditingId(null);
+      fetchMembers();
+    } catch (err) {
+      console.error('Lỗi khi sửa tên:', err);
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -99,13 +119,46 @@ const Members = () => {
         ) : (
           <ul className="space-y-3">
             {members.map((member) => (
-              <li key={member.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg uppercase">
-                  {member.name.charAt(0)}
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{member.name}</p>
-                </div>
+              <li key={member.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-4">
+                {editingId === member.id ? (
+                  <form onSubmit={(e) => handleEditSubmit(e, member.id)} className="flex items-center gap-2 flex-1">
+                    <input
+                      type="text"
+                      autoFocus
+                      required
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="flex-1 min-w-0 px-3 py-1.5 border border-brand rounded-lg focus:outline-none focus:ring-1 focus:ring-brand"
+                    />
+                    <button type="submit" disabled={savingEdit} className="p-1.5 bg-brand text-white rounded-lg hover:bg-brand-dark transition-colors disabled:opacity-50">
+                      <Check size={18} />
+                    </button>
+                    <button type="button" onClick={() => setEditingId(null)} className="p-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors">
+                      <X size={18} />
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg uppercase">
+                        {member.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">{member.name}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setEditingId(member.id);
+                        setEditName(member.name);
+                      }}
+                      className="p-2 text-gray-400 hover:text-brand hover:bg-brand/10 rounded-lg transition-colors"
+                      title="Sửa tên"
+                    >
+                      <Edit2 size={18} />
+                    </button>
+                  </>
+                )}
               </li>
             ))}
           </ul>

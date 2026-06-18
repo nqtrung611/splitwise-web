@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, query, where, addDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where, addDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { UserProfile, Expense, Member } from '../types';
 
@@ -25,6 +25,11 @@ export const createMember = async (adminId: string, name: string) => {
     createdAt: Date.now()
   });
   return docRef.id;
+};
+
+export const updateMember = async (memberId: string, name: string) => {
+  const docRef = doc(db, 'members', memberId);
+  await updateDoc(docRef, { name });
 };
 
 export const getMembers = async (adminId: string): Promise<Member[]> => {
