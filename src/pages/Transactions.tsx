@@ -19,6 +19,22 @@ const Transactions = () => {
   const [reports, setReports] = useState<MemberReport[]>([]);
   const [membersMap, setMembersMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  
+  // Date filter state
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const filteredExpenses = expenses.filter(expense => {
+    if (startDate) {
+      const sDate = new Date(startDate).setHours(0, 0, 0, 0);
+      if (expense.date < sDate) return false;
+    }
+    if (endDate) {
+      const eDate = new Date(endDate).setHours(23, 59, 59, 999);
+      if (expense.date > eDate) return false;
+    }
+    return true;
+  });
 
   const fetchTransactionsAndReports = async () => {
     if (!user) return;
@@ -168,22 +184,39 @@ const Transactions = () => {
 
       {/* Danh sách giao dịch */}
       <div className="pt-4">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <History className="text-brand" size={24} /> Lịch sử giao dịch chi tiết
-        </h2>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+            <History className="text-brand" size={24} /> Lịch sử chi tiết
+          </h2>
+          <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
+            <input 
+              type="date" 
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand focus:border-transparent text-gray-700 bg-gray-50 hover:bg-white transition-colors"
+            />
+            <span className="text-gray-400 font-medium">-</span>
+            <input 
+              type="date" 
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand focus:border-transparent text-gray-700 bg-gray-50 hover:bg-white transition-colors"
+            />
+          </div>
+        </div>
         {loading ? (
           <p className="text-gray-500">Đang tải...</p>
-        ) : expenses.length === 0 ? (
+        ) : filteredExpenses.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
             <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-4xl">🌱</span>
+              <span className="text-4xl">🔍</span>
             </div>
-            <p className="text-gray-600 font-medium text-lg">Chưa có giao dịch nào!</p>
-            <p className="text-gray-400 mt-2">Các khoản chi phí sẽ hiển thị ở đây.</p>
+            <p className="text-gray-600 font-medium text-lg">Không tìm thấy giao dịch nào</p>
+            <p className="text-gray-400 mt-2">Vui lòng thử chọn khoảng thời gian khác.</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {expenses.map((expense) => {
+            {filteredExpenses.map((expense) => {
               const iPaid = expense.payerId === user?.uid;
               const mySplit = expense.splits.find(s => s.userId === user?.uid)?.amount || 0;
               

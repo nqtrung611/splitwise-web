@@ -16,6 +16,10 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, onSu
   const { user } = useAuth();
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
+  const [expenseDate, setExpenseDate] = useState(() => {
+    const tzOffset = new Date().getTimezoneOffset() * 60000;
+    return new Date(Date.now() - tzOffset).toISOString().split('T')[0];
+  });
   const [members, setMembers] = useState<Member[]>([]);
   
   // Selection state
@@ -105,7 +109,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, onSu
         splits,
         involvedUsers: Array.from(new Set([...involvedUsers, user.uid])),
         createdBy: user.uid,
-        date: Date.now()
+        date: new Date(expenseDate).getTime() || Date.now()
       });
 
       onSuccess();
@@ -138,6 +142,17 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, onSu
           {error && <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100">{error}</div>}
 
           <form id="expense-form" onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ngày giao dịch</label>
+              <input
+                type="date"
+                required
+                value={expenseDate}
+                onChange={e => setExpenseDate(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent focus:bg-white transition-all text-gray-900 font-medium"
+              />
+            </div>
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả (Ví dụ: Ăn trưa)</label>
               <input
