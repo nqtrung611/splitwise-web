@@ -17,6 +17,7 @@ const Members = () => {
   const [editName, setEditName] = useState('');
   const [savingEdit, setSavingEdit] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [memberToDelete, setMemberToDelete] = useState<{ id: string, name: string } | null>(null);
 
   const fetchMembers = async () => {
     if (!user) return;
@@ -72,15 +73,19 @@ const Members = () => {
     }
   };
 
-  const handleDeleteMember = async (id: string, name: string) => {
-    if (!window.confirm(`Bạn có chắc chắn muốn xoá thành viên "${name}" không?`)) {
-      return;
-    }
+  const handleDeleteMember = (id: string, name: string) => {
+    setMemberToDelete({ id, name });
+  };
+
+  const confirmDelete = async () => {
+    if (!memberToDelete) return;
+    const { id } = memberToDelete;
     
     setDeletingId(id);
     try {
       await deleteMember(id);
       fetchMembers();
+      setMemberToDelete(null);
     } catch (err) {
       console.error('Lỗi khi xoá thành viên:', err);
       alert('Có lỗi xảy ra khi xoá thành viên.');
@@ -192,6 +197,35 @@ const Members = () => {
           </ul>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {memberToDelete && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden flex flex-col">
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-2">Xoá thành viên?</h2>
+              <p className="text-gray-600">
+                Bạn có chắc chắn muốn xoá thành viên <span className="font-semibold text-gray-900">"{memberToDelete.name}"</span> không? Hành động này không thể hoàn tác.
+              </p>
+            </div>
+            <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex gap-3">
+              <button
+                onClick={() => setMemberToDelete(null)}
+                className="flex-1 px-4 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={deletingId === memberToDelete.id}
+                className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl font-medium hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 disabled:opacity-70 disabled:shadow-none"
+              >
+                {deletingId === memberToDelete.id ? 'Đang xoá...' : 'Xoá'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
