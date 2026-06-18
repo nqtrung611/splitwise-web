@@ -9,6 +9,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSettleModalOpen, setIsSettleModalOpen] = useState(false);
+  const [settleData, setSettleData] = useState<{ memberId: string, amount: number, direction: 'MEMBER_TO_ADMIN' | 'ADMIN_TO_MEMBER' } | null>(null);
   const [members, setMembers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
@@ -109,18 +110,33 @@ const Dashboard = () => {
               const memberName = members[userId] || 'Thành viên';
               const theyOweYou = amount > 0;
               return (
-                <div key={userId} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
-                     <UserCircle2 size={24} />
+                <div key={userId} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                       <UserCircle2 size={24} />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{memberName}</p>
+                      {theyOweYou ? (
+                        <p className="text-sm font-semibold text-brand">Nợ bạn ₫{Math.abs(amount).toLocaleString('vi-VN')}</p>
+                      ) : (
+                        <p className="text-sm font-semibold text-red-600">Bạn nợ ₫{Math.abs(amount).toLocaleString('vi-VN')}</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{memberName}</p>
-                    {theyOweYou ? (
-                      <p className="text-sm font-semibold text-brand">Nợ bạn ₫{Math.abs(amount).toLocaleString('vi-VN')}</p>
-                    ) : (
-                      <p className="text-sm font-semibold text-red-600">Bạn nợ ₫{Math.abs(amount).toLocaleString('vi-VN')}</p>
-                    )}
-                  </div>
+                  <button 
+                    onClick={() => {
+                      setSettleData({
+                        memberId: userId,
+                        amount: Math.abs(amount),
+                        direction: theyOweYou ? 'MEMBER_TO_ADMIN' : 'ADMIN_TO_MEMBER'
+                      });
+                      setIsSettleModalOpen(true);
+                    }}
+                    className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                  >
+                    Thanh toán
+                  </button>
                 </div>
               );
             })}
@@ -135,8 +151,14 @@ const Dashboard = () => {
       />
       <SettleUpModal 
         isOpen={isSettleModalOpen} 
-        onClose={() => setIsSettleModalOpen(false)} 
+        onClose={() => {
+          setIsSettleModalOpen(false);
+          setSettleData(null);
+        }} 
         onSuccess={fetchDashboardData} 
+        defaultSelectedMemberId={settleData?.memberId}
+        defaultAmount={settleData?.amount}
+        defaultDirection={settleData?.direction}
       />
     </div>
   );

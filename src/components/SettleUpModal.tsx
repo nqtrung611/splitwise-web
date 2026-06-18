@@ -8,11 +8,14 @@ interface SettleUpModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  defaultSelectedMemberId?: string;
+  defaultAmount?: number;
+  defaultDirection?: 'MEMBER_TO_ADMIN' | 'ADMIN_TO_MEMBER';
 }
 
 type Direction = 'MEMBER_TO_ADMIN' | 'ADMIN_TO_MEMBER';
 
-const SettleUpModal: React.FC<SettleUpModalProps> = ({ isOpen, onClose, onSuccess }) => {
+const SettleUpModal: React.FC<SettleUpModalProps> = ({ isOpen, onClose, onSuccess, defaultSelectedMemberId, defaultAmount, defaultDirection }) => {
   const { user } = useAuth();
   const [amount, setAmount] = useState('');
   const [members, setMembers] = useState<Member[]>([]);
@@ -26,8 +29,11 @@ const SettleUpModal: React.FC<SettleUpModalProps> = ({ isOpen, onClose, onSucces
   useEffect(() => {
     if (isOpen && user) {
       getMembers(user.uid).then(setMembers).catch(console.error);
+      if (defaultSelectedMemberId) setSelectedMemberId(defaultSelectedMemberId);
+      if (defaultAmount) setAmount(defaultAmount.toString());
+      if (defaultDirection) setDirection(defaultDirection);
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, defaultSelectedMemberId, defaultAmount, defaultDirection]);
 
   if (!isOpen || !user) return null;
 
