@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, query, where, addDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { UserProfile, Expense, Member } from '../types';
 
@@ -30,6 +30,11 @@ export const createMember = async (adminId: string, name: string) => {
 export const updateMember = async (memberId: string, name: string) => {
   const docRef = doc(db, 'members', memberId);
   await updateDoc(docRef, { name });
+};
+
+export const deleteMember = async (memberId: string) => {
+  const docRef = doc(db, 'members', memberId);
+  await deleteDoc(docRef);
 };
 
 export const getMembers = async (adminId: string): Promise<Member[]> => {

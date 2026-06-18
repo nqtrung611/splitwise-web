@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getMembers, createMember, updateMember } from '../services/api';
+import { getMembers, createMember, updateMember, deleteMember } from '../services/api';
 import type { Member } from '../types';
-import { UserPlus, User, Edit2, X, Check } from 'lucide-react';
+import { UserPlus, User, Edit2, X, Check, Trash2 } from 'lucide-react';
 
 const Members = () => {
   const { user } = useAuth();
@@ -16,6 +16,7 @@ const Members = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [savingEdit, setSavingEdit] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchMembers = async () => {
     if (!user) return;
@@ -68,6 +69,23 @@ const Members = () => {
       console.error('Lỗi khi sửa tên:', err);
     } finally {
       setSavingEdit(false);
+    }
+  };
+
+  const handleDeleteMember = async (id: string, name: string) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn xoá thành viên "${name}" không?`)) {
+      return;
+    }
+    
+    setDeletingId(id);
+    try {
+      await deleteMember(id);
+      fetchMembers();
+    } catch (err) {
+      console.error('Lỗi khi xoá thành viên:', err);
+      alert('Có lỗi xảy ra khi xoá thành viên.');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -147,16 +165,26 @@ const Members = () => {
                         <p className="font-semibold text-gray-900">{member.name}</p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        setEditingId(member.id);
-                        setEditName(member.name);
-                      }}
-                      className="p-2 text-gray-400 hover:text-brand hover:bg-brand/10 rounded-lg transition-colors"
-                      title="Sửa tên"
-                    >
-                      <Edit2 size={18} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => {
+                          setEditingId(member.id);
+                          setEditName(member.name);
+                        }}
+                        className="p-2 text-gray-400 hover:text-brand hover:bg-brand/10 rounded-lg transition-colors"
+                        title="Sửa tên"
+                      >
+                        <Edit2 size={18} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMember(member.id, member.name)}
+                        disabled={deletingId === member.id}
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                        title="Xoá thành viên"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
                   </>
                 )}
               </li>
