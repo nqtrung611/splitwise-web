@@ -26,13 +26,13 @@ const MainLayout = () => {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200">
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-brand flex items-center gap-2">
-            <span className="bg-brand text-white p-1 rounded-md">
+          <h1 className="text-xl font-bold text-brand flex items-center gap-2 whitespace-nowrap">
+            <span className="bg-brand text-white p-1 rounded-md shrink-0">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L2 22h20L12 2z" fill="currentColor" />
               </svg>
             </span>
-            Splitwise
+            Quản lý chi tiêu
           </h1>
         </div>
         <nav className="flex-1 px-4 space-y-2">

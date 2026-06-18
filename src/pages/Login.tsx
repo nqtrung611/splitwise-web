@@ -78,9 +78,9 @@ const Login = () => {
             </span>
         </div>
         <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-          {isLogin ? 'Đăng nhập vào Splitwise' : 'Tạo tài khoản mới'}
+          {isLogin ? 'Đăng nhập vào Quản lý chi tiêu' : 'Tạo tài khoản mới'}
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        {/* <p className="mt-2 text-center text-sm text-gray-600">
           Hoặc{' '}
           <button 
             onClick={() => { setIsLogin(!isLogin); setError(''); }}
@@ -88,7 +88,7 @@ const Login = () => {
           >
             {isLogin ? 'đăng ký tài khoản mới' : 'đăng nhập vào tài khoản có sẵn'}
           </button>
-        </p>
+        </p> */}
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
