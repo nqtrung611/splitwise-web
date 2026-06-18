@@ -69,7 +69,7 @@ const Dashboard = () => {
     fetchDashboardData();
   }, [user]);
 
-  const activeBalances = Object.entries(balances).filter(([_, amount]) => Math.abs(amount) > 0);
+  const activeBalances = Object.entries(balances).filter(([id, amount]) => Math.abs(amount) > 0 && members[id]);
 
   return (
     <div className="space-y-6">
