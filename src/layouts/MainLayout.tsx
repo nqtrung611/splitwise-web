@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Home, UserPlus, LogOut, BarChart3 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,6 +13,21 @@ const MainLayout = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMobileMenu(false);
+      }
+    };
+
+    if (showMobileMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showMobileMenu]);
 
   const handleSignOut = async () => {
     try {
@@ -86,7 +101,7 @@ const MainLayout = () => {
             </span>
             <h1 className="text-lg font-bold text-brand">Quản lý chi tiêu</h1>
           </div>
-          <div className="relative">
+          <div className="relative" ref={menuRef}>
             <button 
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="flex items-center gap-2 bg-gray-50 py-1 px-3 rounded-full border border-gray-100 shadow-sm hover:bg-gray-100 transition-colors"
@@ -98,12 +113,7 @@ const MainLayout = () => {
             </button>
             
             {showMobileMenu && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40" 
-                  onClick={() => setShowMobileMenu(false)}
-                />
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden z-50">
                   <button
                     onClick={() => {
                       setShowMobileMenu(false);
@@ -114,8 +124,7 @@ const MainLayout = () => {
                     <LogOut size={18} />
                     <span className="font-medium text-sm">Đăng xuất</span>
                   </button>
-                </div>
-              </>
+              </div>
             )}
           </div>
         </header>
